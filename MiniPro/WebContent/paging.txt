@@ -1,0 +1,39 @@
+-- 2021/02/17 procedure 
+-- micol hr 계정 select 할 수 있도록 설정  (cmd에서 관리자로 권한부여)
+-- grant select on hr.employees to micol;
+SELECT * FROM HR.EMPLOYEES;
+
+--employees 테이블 생성
+create table employees
+as
+select * from hr.employees;
+
+select * from employees;
+
+--salary_history 테이블 생성(employees 테이블에서 salary가 변경될때마다 salary_history테이블에 기록을 저장)
+create table salary_history(
+employee_id number(6,0),
+before_salary number(8,2),
+current_salary number(8,2),
+change_date date
+);
+
+select * from employees
+where employee_id=101;
+
+select employee_id, before_salary, current_salary, to_char(change_date,'yyyy-mm-dd hh24:mi:ss') c_date from salary_history;
+
+insert into employees
+select employee_id+400, first_name, last_name, email, phone_number, hire_date, job_id, salary, commission_pct, manager_id, department_id from employees;
+
+select count(*) from employees;
+commit;
+rollback;
+
+select b.* 
+from(select rownum rn,a.* 
+        from (select * 
+                  from employees
+                   order by employee_id) a) b
+where b.rn between 21 and 30
+;
